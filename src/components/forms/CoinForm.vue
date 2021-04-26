@@ -15,7 +15,7 @@
         :ask="coinDetails.ask"
         :calculatedVal="coinDetails.calculatedVal"
       ></coin-detail>
-      <p>Your local storage is set to: {{localCoin.val}}</p>
+      <p v-if="localCoin">Your local storage is set to: {{localCoin.val}}</p>
       <base-button @click="clearLocalStorage">Clear Storage</base-button>
       <p v-if="!formIsValid">Please fix the above errors and submit again.</p>
       <p v-if="!fetchIsValid">We are currently experiencing issues, please try again later.</p>
@@ -31,10 +31,7 @@ export default {
     components:{CoinDetail},
  
     mounted(){
-        if(this.coin.val){
-        this.getCoin();
-        }else {return}
-        
+        this.submitForm();
     },
   
     
@@ -99,25 +96,22 @@ export default {
       },
 
       getCoin(){
-         this.localCoin  = localStorage.getItem('storedData');
+         let x  = localStorage.getItem('storedData');
+         this.localCoin = JSON.parse(x);
          if(this.localCoin){
-         this.localCoin = JSON.parse(this.localCoin);
-         this.coin= this.localCoin;
+      
+         this.coin = this.localCoin;
+          this.getCoinInfo(this.coin.val)
          }
          
          
       },  
 
       validateForm(){
-        this.formIsValid=true;
-        
+        this.formIsValid=true;      
       },
         submitForm(){
-          if(!this.coin.val){
-            return;
-          }
-            this.getCoin(); 
-            this.getCoinInfo(this.coin.val)      
+            this.getCoin();                 
         }
     }
 }
