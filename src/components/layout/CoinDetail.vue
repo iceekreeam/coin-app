@@ -1,8 +1,8 @@
 <template>
     <section>
         <ul class="details">
-            <li>Ask:{{ask}}</li>
-            <li>Change:{{calculatedVal}}%</li>
+            <li>Ask: {{ask}}</li>
+            <li>Change: {{calculatedVal}}%</li>
         </ul>
     </section>
 </template>
