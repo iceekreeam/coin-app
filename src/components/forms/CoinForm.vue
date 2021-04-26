@@ -111,7 +111,7 @@ export default {
       },
         submitForm(){
             if(this.coin){
-                this.setStorage();
+               // this.setStorage();
             }
     
             this.getCoin(); 
