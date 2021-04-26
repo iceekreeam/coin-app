@@ -31,7 +31,9 @@ export default {
     components:{CoinDetail},
  
     mounted(){
-        this.submitForm()
+        if(this.coin.val){
+        this.getCoin();
+        }else {return}
         
     },
   
@@ -75,7 +77,7 @@ export default {
         const responseData = await response.json();   
        this.coinDetails = {
          ask: (responseData.ask).toFixed(2),
-         calculatedVal: (100 - (responseData.bid /responseData.ask) *100).toFixed(2) 
+         calculatedVal: (100 - (responseData.bid /responseData.ask) * 100).toFixed(2) 
        } 
      }catch(error){
           this.fetchIsValid = false;
@@ -111,9 +113,9 @@ export default {
         
       },
         submitForm(){
-          // if(!this.coin.val){
-          //   return;
-          // }
+          if(!this.coin.val){
+            return;
+          }
             this.getCoin(); 
             this.getCoinInfo(this.coin.val)      
         }
