@@ -1,8 +1,8 @@
 <template>
   <form @submit.prevent="submitForm">
     <div style="display:flex; justify-content:center; flex-direction:column;">
-      <div style="display:flex; justify-content:center; align-items: center;" class="form-control">
-        <label style="margin-right: 5px;" for="crypto">Choose a cryptocurrency:</label>
+      <div :class="{invalid: !formIsValid}" style="display:flex; justify-content:center; align-items: center;" class="form-control">
+        <label  :class="{invalid: false}" style="margin-right: 5px;" for="crypto" >Choose a cryptocurrency:</label>
         <select v-model="coin" style="margin-right: 5px;" id="crypto" name="crypto">
           <option :value="{val:'BTC', title:'Bitcoin'}">Bitcoin</option>
           <option :value="{val:'ETC', title: 'Ethereum'}">Ethereum</option>
@@ -69,25 +69,24 @@ export default {
 
     methods:{
       async getCoinInfo(coin){
-     
+     try{
+        this.fetchIsValid = true;
         let  url = `https://trade.cointree.com/api/prices/aud/${coin}` 
         
         const response = await fetch(url)
-        const responseData = await response.json();
-        if(!response.ok){
-          const error = new Error(responseData.message || 'Failed to Fetch!')
+        const responseData = await response.json();   
+       this.coinDetails = {
+         ask: (responseData.ask).toFixed(2),
+         calculatedVal: (100 - (responseData.bid /responseData.ask) *100).toFixed(2) 
+       } 
+     }catch(error){
           this.fetchIsValid = false;
           throw error;
-        }
-        
-       this.coinDetails = {
-         ask: responseData.ask,
-         calculatedVal: (responseData.bid /responseData.ask) *100 
-       } 
-        
+     }
       },
      
      setStorage(){
+            this.formIsValid=true;
             console.log(this.coin.title);
             localStorage.setItem('storedData', JSON.stringify({
             val: this.coin.val,
@@ -105,7 +104,12 @@ export default {
          if(this.localCoin){
          this.localCoin = JSON.parse(this.localCoin);
          this.coin= this.localCoin;
+         }else {
+           this.formIsValid=false;
+         
          }
+         
+         
       },  
 
       validateForm(){
@@ -113,6 +117,7 @@ export default {
         
       },
         submitForm(){
+            console.log(this.formIsValid)
             this.getCoin(); 
             this.getCoinInfo(this.coin.val)      
         }
@@ -120,18 +125,58 @@ export default {
 }
 </script>
 <style scoped>
-.form-control {
-  margin: 0.5rem 0;
-}
+    .form-control {
+    margin: 0.5rem 0;
+    }
 
-label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 0.5rem;
-}
+    label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+    }
 
-h3 {
-  margin: 0.5rem 0;
-  font-size: 1rem;
-}
+    input[type="checkbox"] + label {
+    font-weight: normal;
+    display: inline;
+    margin: 0 0 0 0.5rem;
+    }
+
+    input,
+    textarea {
+    display: block;
+    width: 100%;
+    border: 1px solid #ccc;
+    font: inherit;
+    }
+
+    input:focus,
+    textarea:focus {
+    background-color: #f0e6fd;
+    outline: none;
+    border-color: #3d008d;
+    }
+
+    input[type="checkbox"] {
+    display: inline;
+    width: auto;
+    border: none;
+    }
+
+    input[type="checkbox"]:focus {
+    outline: #3d008d solid 1px;
+    }
+
+    h3 {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    }
+
+    .invalid label {
+    color: red;
+    }
+
+    .invalid input,
+    .invalid textarea {
+    border: 1px solid red;
+    }
 </style>
