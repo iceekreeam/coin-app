@@ -31,9 +31,7 @@ export default {
     components:{CoinDetail},
  
     mounted(){
-        if(this.coin.val){
-        this.getCoin();
-        }else {return}
+        this.submitForm()
         
     },
   
@@ -113,9 +111,9 @@ export default {
         
       },
         submitForm(){
-          if(!this.coin.val){
-            return;
-          }
+          // if(!this.coin.val){
+          //   return;
+          // }
             this.getCoin(); 
             this.getCoinInfo(this.coin.val)      
         }
