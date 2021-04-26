@@ -113,6 +113,9 @@ export default {
         
       },
         submitForm(){
+          if(!this.coin.val){
+            return;
+          }
             this.getCoin(); 
             this.getCoinInfo(this.coin.val)      
         }
