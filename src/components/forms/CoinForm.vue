@@ -18,6 +18,7 @@
       <p>Your local storage is set to: {{localCoin.val}}</p>
       <base-button @click="clearLocalStorage">Clear Storage</base-button>
       <p v-if="!formIsValid">Please fix the above errors and submit again.</p>
+      <p v-if="!fetchIsValid">We are currently experiencing issues, please try again later.</p>
     </div>
   </form>
 </template>
@@ -41,7 +42,7 @@ export default {
         return {
          selected:false,  
           formIsValid: true,  
-         
+         fetchIsValid: true,
          coinDetails:{
             ask:null,
             calculatedVal:null
@@ -68,12 +69,14 @@ export default {
 
     methods:{
       async getCoinInfo(coin){
+     
         let  url = `https://trade.cointree.com/api/prices/aud/${coin}` 
+        
         const response = await fetch(url)
         const responseData = await response.json();
-        
         if(!response.ok){
           const error = new Error(responseData.message || 'Failed to Fetch!')
+          this.fetchIsValid = false;
           throw error;
         }
         
@@ -81,7 +84,7 @@ export default {
          ask: responseData.ask,
          calculatedVal: (responseData.bid /responseData.ask) *100 
        } 
-       
+        
       },
      
      setStorage(){
@@ -110,12 +113,8 @@ export default {
         
       },
         submitForm(){
-            if(this.coin){
-               // this.setStorage();
-            }
-    
             this.getCoin(); 
-            this.getCoinInfo(this.coin.val)     
+            this.getCoinInfo(this.coin.val)      
         }
     }
 }
